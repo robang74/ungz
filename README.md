@@ -1,8 +1,10 @@
-# ungz - performant inflater for gzip files
+# ungz
 
 > [!NOTE]
 > 
 > In original, the project was named **pigz** but this name was colling with the parallel version of `gzip`, and it is confusing because already used by `pigz`.
+
+## Inflater for gzip files
 
 This is a library for decompressing (inflating) gzipped data. It is written in x86-64 assembly, and intended for use by C/C++ programs. It is generally faster than zlib, however unlike zlib:
 
@@ -11,15 +13,17 @@ This is a library for decompressing (inflating) gzipped data. It is written in x
   * it cannot operate on raw deflate streams (only gzip streams)
   * it is not API compatible with zlib
 
+## Performance tests
+
 The "hot cache" is relevant in the tests below, because the disk I/O doesn't enter in the scene anymore but just the decompressing time:
 
-| Hot cache x10 (MB/s)   | Min | Avg | Max |
-|------------------------|-----|-----|-----|
-| `ungz <$f`             | 291 | 300 | 307 |
-| `cat $f | ungz`        | 292 | 298 | 304 |
-| `cat $f | gzip -dc`    | 236 | 240 | 243 |
-| `cat $f | pigz -dc`    | 256 | 262 | 268 |
-| `busybox gzip -dc <$f` | 118 | 120 | 122 |
+| x10 hot cache (MB/s)   | min | avg     | max | R% (avg)      |
+|------------------------|-----|---------|-----|---------------|
+| `ungz <$f`             | 291 | 300     | 307 |   100         |
+| `cat $f : ungz`        | 292 | **298** | 304 |    99         |
+| `cat $f : pigz -dc`    | 256 | 262     | 268 |    87 (1.15x) |
+| `cat $f : gzip -dc`    | 236 | 240     | 243 |    80 (1.25x) |
+| `busybox gzip -dc <$f` | 118 | 120     | 122 |    40 (2.50x) |
 
 The missing test, *the one should be listed but it does not*, is about `pigz` compiled with the [zlib-ng](https://github.com/zlib-ng/zlib-ng). Which includes the CloudFlare and AWS Graviton optimisations for zlib (cfr. [here](https://aws.amazon.com/it/blogs/opensource/improving-zlib-cloudflare-and-comparing-performance-with-other-zlib-forks/)).
 
