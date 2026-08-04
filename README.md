@@ -17,15 +17,16 @@ This is a library for decompressing (inflating) gzipped data. It is written in x
 
 The "hot cache" is relevant in the tests below, because the disk I/O doesn't enter in the scene anymore but just the decompressing time:
 
-| x10 hot cache (MB/s)   | min | avg     | max | R% (avg)      |
-|------------------------|-----|---------|-----|---------------|
-| `ungz <$f`             | 291 | 300     | 307 |   100         |
-| `cat $f : ungz`        | 292 | **298** | 304 |    99         |
-| `cat $f : pigz -dc`    | 256 | 262     | 268 |    87 (1.15x) |
-| `cat $f : gzip -dc`    | 236 | 240     | 243 |    80 (1.25x) |
-| `busybox gzip -dc <$f` | 118 | 120     | 122 |    40 (2.50x) |
+| x10 hot cache (MB/s)    | min | avg     | max | R%  | times |
+|-------------------------|-----|---------|-----|----:|-------|
+| `ng/minigzip -d -c <$f` | 391 | 427     | 441 | 142 | 0.70x |
+| `ungz <$f`              | 291 | **300** | 307 | 100 |       |
+| `cat $f : ungz`         | 292 | 298     | 304 |  99 |       |
+| `cat $f : pigz -dc`     | 256 | 262     | 268 |  87 | 1.15x |
+| `cat $f : gzip -dc`     | 236 | 240     | 243 |  80 | 1.25x |
+| `busybox gzip -dc <$f`  | 118 | 120     | 122 |  40 | 2.50x |
 
-The missing test, *the one should be listed but it does not*, is about `pigz` compiled with the [zlib-ng](https://github.com/zlib-ng/zlib-ng). Which includes the CloudFlare and AWS Graviton optimisations for zlib (cfr. [here](https://aws.amazon.com/it/blogs/opensource/improving-zlib-cloudflare-and-comparing-performance-with-other-zlib-forks/)).
+The unavoidable tests, *the ones should be listed and cannot be missed*, are about [zlib-ng](https://github.com/zlib-ng/zlib-ng) which outperforms the CloudFlare x86-64 optimisations for zlib provided by an old unmaintained fork for AWS Graviton (cfr. [here](https://aws.amazon.com/it/blogs/opensource/improving-zlib-cloudflare-and-comparing-performance-with-other-zlib-forks/)).
 
 ## The API
 
