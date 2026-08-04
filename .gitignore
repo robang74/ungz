@@ -1,5 +1,8 @@
-*.bin
-*.bin.dSYM
 *.o
-pigz_s.h
-pigz_o.s
+*.bin.dSYM
+bencher
+builder
+ungz
+ungz_o.s
+ungz_s.h
+bench.gz

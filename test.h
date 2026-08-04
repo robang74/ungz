@@ -1,5 +1,5 @@
 #pragma once
-#include "pigz.h"
+#include "ungz.h"
 #ifdef __cplusplus
 extern "C" {
 #endif

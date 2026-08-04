@@ -1,28 +1,39 @@
-DASM=LuaJIT/dynasm
+LUAJ ?= LuaJIT/src/luajit
+DASM ?= LuaJIT/dynasm
+OPTS ?= -O2 -g0 -s
 
-all: bench.bin ungz.bin
+all: bencher ungz
+
+LuaJIT/src:
+	git submodule update --init --recursive
+
+$(LUAJ): $(DASM)
+
+$(DASM): LuaJIT/src
+	cd LuaJIT/ && make -j
 
 clean:
-	rm pigz_s.h
-	rm pigz_o.s
-	rm *.o
-	rm *.bin
+	rm -f ungz_s.h ungz_o.s *.o
+	rm -f builder bencher ungz
 
-pigz_s.h: pigz.s
-	luajit $(DASM)/dynasm.lua -o pigz_s.h -F pigz.s
+distclean: clean
+	rm -f bench.gz
 
-test.o: test.c test.h pigz.h
-	gcc -c -g -o test.o test.c
+ungz_s.h: $(LUAJ) $(DASM) ungz.s
+	$(LUAJ) $(DASM)/dynasm.lua -o ungz_s.h -F ungz.s
 
-assembler.bin: assembler.c pigz_s.h test.o
-	gcc -o assembler.bin -g -I $(DASM) assembler.c test.o
+test.o: test.c test.h ungz.h
+	gcc $(OPTS) -c -o test.o test.c
 
-pigz.o: assembler.bin
-	./assembler.bin >/dev/null
-	gcc -c -o pigz.o pigz_o.s
+ungz.o: builder
+	./builder >/dev/null
+	gcc $(OPTS) -c -o ungz.o ungz_o.s
 
-ungz.bin: pigz.o pigz.h ungz.c
-	gcc -o ungz.bin -O2 ungz.c pigz.o
+builder: builder.c ungz_s.h test.o
+	gcc $(OPTS) -o builder -I $(DASM) builder.c test.o
 
-bench.bin: pigz.o pigz.h bench.c
-	gcc -o bench.bin -O2 bench.c pigz.o
+bencher: ungz.o ungz.h bench.c
+	gcc $(OPTS) -o $@ bench.c ungz.o
+	
+ungz: ungz.o ungz.h ungz.c
+	gcc $(OPTS) -o $@ ungz.c ungz.o

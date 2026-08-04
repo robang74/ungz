@@ -1,4 +1,4 @@
-#include "pigz.h"
+#include "ungz.h"
 #include <stdio.h>
 #include <fcntl.h>
 #include <errno.h>

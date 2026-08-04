@@ -1,7 +1,7 @@
 #include "dasm_proto.h"
 #include "dasm_x86.h"
 #include "test.h"
-#include "pigz_s.h"
+#include "ungz_s.h"
 #include <stdio.h>
 #ifdef _WIN32
 #include <Windows.h>
@@ -232,7 +232,7 @@ void pigz_assemble(pigz_functions* result) {
   }
 #endif
   n = 0;
-  f = fopen("pigz_o.s", "w");
+  f = fopen("ungz_o.s", "w");
   fprintf(f, ".file \"pigz.s\"\n");
 #ifdef __linux__
   fprintf(f, ".section .note.GNU-stack, \"\", @progbits\n");
