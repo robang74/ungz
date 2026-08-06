@@ -24,9 +24,12 @@ The "hot cache" is relevant in the tests below, because the disk I/O doesn't ent
 | `cat $f : ungz`         | 292 | 298     | 304 |  99 |       |
 | `cat $f : pigz -dc`     | 256 | 262     | 268 |  87 | 1.15x |
 | `cat $f : gzip -dc`     | 236 | 240     | 243 |  80 | 1.25x |
-| `busybox gzip -dc <$f`  | 118 | 120     | 122 |  40 | 2.50x |
+| `uchaosys gzip -dc <$f` | 183 | 199     | 202 |  66 | 1.51x |
+| `busybox gzip -dc <$f`  | 111 | 118     | 120 |  39 | 2.54x |
 
 The unavoidable tests, *the ones should be listed and cannot be missed*, are about [zlib-ng](https://github.com/zlib-ng/zlib-ng) which outperforms the CloudFlare x86-64 optimisations for zlib provided by an old unmaintained fork for AWS Graviton (cfr. [here](https://aws.amazon.com/it/blogs/opensource/improving-zlib-cloudflare-and-comparing-performance-with-other-zlib-forks/)).
+
+The `gzip` from [uchaosys](https://github.com/robang74/uchaosys) is related to custom/forked version of BusyBox in which the CRC32 compute and GZIP inflate has been speeded-up in exchange of the footprint size (+5Kb) and leveraging the 64bit architecture (or SSE4.2 when available).
 
 ## The API
 
