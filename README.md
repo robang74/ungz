@@ -23,8 +23,8 @@ The "hot cache" is relevant in the tests below, because the disk I/O doesn't ent
 | `ungz <$f`              | 291 | **300** | 307 | 100 |       |
 | `cat $f : ungz`         | 292 | 298     | 304 |  99 |       |
 | `cat $f : pigz -dc`     | 256 | 262     | 268 |  87 | 1.15x |
-| `cat $f : gzip -dc`     | 236 | 240     | 243 |  80 | 1.25x |
-| `uchaosys gzip -dc <$f` | 183 | 199     | 202 |  66 | 1.51x |
+| `cat $f : gzip -dc`     | 215 | 231     | 243 |  77 | 1.30x |
+| `uchaosys gzip -dc <$f` | 197 | 205     | 212 |  68 | 1.46x |
 | `busybox gzip -dc <$f`  | 111 | 118     | 120 |  39 | 2.54x |
 
 The unavoidable tests, *the ones should be listed and cannot be missed*, are about [zlib-ng](https://github.com/zlib-ng/zlib-ng) which outperforms the CloudFlare x86-64 optimisations for zlib provided by an old unmaintained fork for AWS Graviton (cfr. [here](https://aws.amazon.com/it/blogs/opensource/improving-zlib-cloudflare-and-comparing-performance-with-other-zlib-forks/)).
