@@ -2,7 +2,7 @@ LUAJ ?= LuaJIT/src/luajit
 DASM ?= LuaJIT/dynasm
 OPTS ?= -O2 -g0 -s
 
-all: bencher ungz
+all: bencher ungz libungz.a
 
 LuaJIT/src:
 	git submodule update --init --recursive
@@ -14,23 +14,26 @@ $(DASM): LuaJIT/src
 
 clean:
 	rm -f ungz_s.h ungz_o.s *.o
-	rm -f builder bencher ungz
+	rm -f builder bencher bench.gz
 
 distclean: clean
-	rm -f bench.gz
+	rm -f libungz.a ungz
 
 ungz_s.h: $(LUAJ) $(DASM) ungz.s
 	$(LUAJ) $(DASM)/dynasm.lua -o ungz_s.h -F ungz.s
 
 test.o: test.c test.h ungz.h
-	gcc $(OPTS) -c -o test.o test.c
+	gcc $(OPTS) -c -o $@ test.c
 
 ungz.o: builder
 	./builder >/dev/null
-	gcc $(OPTS) -c -o ungz.o ungz_o.s
+	gcc $(OPTS) -c -o $@ ungz_o.s
+
+libungz.a: ungz.o
+	ar rcs $@ ungz.o
 
 builder: builder.c ungz_s.h test.o
-	gcc $(OPTS) -o builder -I $(DASM) builder.c test.o
+	gcc $(OPTS) -o $@ -I $(DASM) builder.c test.o
 
 bencher: ungz.o ungz.h bench.c
 	gcc $(OPTS) -o $@ bench.c ungz.o
