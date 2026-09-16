@@ -10,7 +10,7 @@ LuaJIT/src:
 $(LUAJ): $(DASM)
 
 $(DASM): LuaJIT/src
-	cd LuaJIT/ && make -j
+	make -C LuaJIT -j
 
 clean:
 	rm -f ungz_s.h ungz_o.s *.o
