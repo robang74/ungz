@@ -5,7 +5,7 @@ OPTS ?= -O2 -g0 -s
 all: bencher ungz libungz.a
 
 LuaJIT/src:
-	git submodule update --init --recursive
+	git submodule update --init --recursive --jobs $(shell nproc)
 
 $(LUAJ): $(DASM)
 
